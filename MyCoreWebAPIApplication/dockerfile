@@ -1,0 +1,14 @@
+FROM microsoft/aspnetcore-build:2.0 As build
+WORKDIR /app
+
+Copy *.csproj ./
+RUN dotnet restore
+
+Copy . ./
+RUN dotnet publish -c release -o out
+
+FROM microsoft/aspnetcore:2.0
+WORKDIR /app
+EXPOSE 80
+Copy --from=build /app/out .
+ENTRYPOINT ["dotnet","MyCoreWebAPIApplication.dll"]
